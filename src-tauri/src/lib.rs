@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::time::Duration;
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -36,7 +37,8 @@ async fn get_lyrics(
     duration_ms: i64,
 ) -> Result<Option<LyricsPayload>, String> {
     let client = reqwest::Client::builder()
-        .user_agent(concat!("LyricFloat/", env!("CARGO_PKG_VERSION"), " (+https://github.com/smile-plzz/LyricFloat)"))
+        .user_agent(concat!("LyricFloat/", env!("CARGO_PKG_VERSION"), " (https://github.com/smile-plzz/LyricFloat)"))
+        .timeout(Duration::from_secs(12))
         .build()
         .map_err(|e| e.to_string())?;
 
@@ -64,7 +66,9 @@ async fn get_lyrics(
     }
 
     if response.status() == reqwest::StatusCode::TOO_MANY_REQUESTS {
-        return Err("Lyrics provider rate limit reached. Try again shortly.".into());
+        let retry_after = response.headers().get("retry-after")
+            .and_then(|v| v.to_str().ok()).unwrap_or("a while");
+        return Err(format!("Lyrics provider busy. Retry after {retry_after} seconds."));
     }
 
     let response = response.error_for_status().map_err(|e| e.to_string())?;
