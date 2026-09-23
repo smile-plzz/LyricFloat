@@ -12,14 +12,14 @@ export async function getNowPlaying(): Promise<NowPlaying | null> {
     return invokeTauri<NowPlaying | null>("get_now_playing");
   }
 
-  const elapsed = (Date.now() % 180_000) + 12_000;
+  const elapsed = Date.now() % 30_000;
   return {
-    title: "Dreams",
-    artist: "Fleetwood Mac",
-    album: "Rumours",
+    title: "LyricFloat Demo",
+    artist: "Preview Mode",
+    album: "",
     source: "browser-preview",
     positionMs: elapsed,
-    durationMs: 257_000,
+    durationMs: 30_000,
     playing: true,
   };
 }
