@@ -144,3 +144,13 @@ button { font: inherit; }
   background: rgba(255,255,255,0.62);
   transition: transform 600ms linear;
 }
+
+/* Intentionally lightweight: controls fade in only while the widget is hovered. */
+.toolbar { grid-template-columns: 23px minmax(65px, 1fr) auto; padding-inline: 10px; gap: 5px; }
+.toolbar-actions { align-items: center; gap: 0; }
+.offset { width: 42px; text-align: center; font-size: 10px; font-variant-numeric: tabular-nums; color: rgba(255,255,255,.8); }
+.paused-badge { align-self: center; font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 6px; }
+.drag-handle { display: grid; place-items: center; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
