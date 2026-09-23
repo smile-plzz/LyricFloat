@@ -12,7 +12,7 @@ LyricFloat reads the active Windows media session (SMTC), looks up synced lyrics
 - 🪟 Frameless, transparent, always-on-top Windows widget
 - 🖱️ Drag anywhere and resize
 - 👻 Fades previous/next lyric lines around the active lyric
-- 🫥 Optional click-through mode
+- ⏱️ Adjustable lyric timing offset (±5 seconds in 0.25-second steps, remembered locally)
 - 🔐 No Spotify account, OAuth token, or API key required
 - 🧪 Browser preview mode for frontend contributors
 
@@ -81,12 +81,24 @@ This first release is **Windows-first**. The UI and lyrics pipeline are intentio
 - The first MVP uses line-level LRC timing, not word-by-word karaoke timing.
 - Widget position persistence and tray/settings UI are planned next.
 
+## Product principles
+
+LyricFloat is a **lyrics companion, not a music player**: no Spotify account, playback controls, song downloads, user accounts, or tracking. It reads only the active media-session metadata and timing required for synchronized display, and sends title/artist/album/duration to LRCLIB to look up lyrics.
+
+The overlay intentionally shows only nearby lines and reveals controls on hover. A simple timing offset addresses slightly mistimed LRC files. We removed click-through from the MVP because it is difficult to recover the invisible window without a tray icon or global shortcut.
+
+The application does not ship or redistribute a lyrics catalogue. Lyrics fetched from third-party services may be subject to their own terms and copyright.
+
+## Testing
+
+Follow [TESTING.md](TESTING.md) for the first Windows smoke test. GitHub Actions runs a frontend build and a Windows Rust compile check, but a real desktop session is still needed to verify overlay transparency and playback timing.
+
 ## Roadmap
 
 - [ ] Persistent widget position and size
-- [ ] System tray controls
+- [ ] System tray controls (required before enabling click-through)
 - [ ] Font size / opacity / blur settings
-- [ ] Manual lyric offset adjustment
+- [x] Manual lyric offset adjustment
 - [ ] Better multi-session selection when several media apps are open
 - [ ] Word-by-word karaoke lyrics when timing data is available
 - [ ] Offline LRC cache
