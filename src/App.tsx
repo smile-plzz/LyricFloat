@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GripHorizontal, Minus, Plus, RotateCcw, X } from "lucide-react";
+import { GripHorizontal, Minus, Plus, RotateCcw, RefreshCw, X } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getLyrics, getNowPlaying } from "./backend";
 import { findCurrentLine, parseLrc } from "./lrc";
@@ -30,6 +30,7 @@ export default function App() {
   const [message, setMessage] = useState("Waiting for music…");
   const [offsetMs, setOffsetMs] = useState(initialOffset);
   const [loading, setLoading] = useState(false);
+  const [retry, setRetry] = useState(0);
   const requestedKey = useRef("");
   const latestKey = useRef("");
   const requestId = useRef(0);
@@ -40,6 +41,7 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
+    requestedKey.current = "";
     let polling = false;
     let timer: number | undefined;
 
@@ -102,7 +104,7 @@ export default function App() {
       requestId.current += 1;
       if (timer !== undefined) window.clearTimeout(timer);
     };
-  }, []);
+  }, [retry]);
 
   const currentIndex = useMemo(
     () => findCurrentLine(lyrics, Math.max(0, (track?.positionMs ?? 0) + offsetMs)),
@@ -137,6 +139,7 @@ export default function App() {
           <span className="offset" title="Lyrics timing adjustment">{offsetMs > 0 ? "+" : ""}{(offsetMs / 1000).toFixed(2)}s</span>
           <button onClick={() => setOffsetMs(value => Math.min(5000, value + 250))} title="Show lyrics 0.25s earlier" aria-label="Lyrics earlier"><Plus size={14} /></button>
           <button onClick={() => setOffsetMs(0)} title="Reset timing offset" aria-label="Reset timing"><RotateCcw size={14} /></button>
+          {track && !loading && !!message && <button onClick={() => setRetry(value => value + 1)} title="Retry lyrics lookup" aria-label="Retry lyrics lookup"><RefreshCw size={14} /></button>}
           <button onClick={close} title="Close LyricFloat" aria-label="Close"><X size={14} /></button>
         </div>
       </header>
